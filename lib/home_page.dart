@@ -8,60 +8,113 @@ class BookListPage extends StatefulWidget {
   State<BookListPage> createState() => _BookListPageState();
 }
 
-class _BookListPageState extends State<BookListPage>{
+class _BookListPageState extends State<BookListPage> {
   List<Map<String, dynamic>> buku = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     fetchBooks();
   }
 
-  Future<void> fetchBooks() async{
-    final response = await Supabase.instance.client
-    .from('buku')
-    .select();
+  Future<void> fetchBooks() async {
+    final response = await Supabase.instance.client.from('buku').select();
 
     setState(() {
       buku = List<Map<String, dynamic>>.from(response);
     });
   }
 
-  Widget build(BuildContext context){
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text("daftar Buku"),
-          actions: [
-            IconButton(onPressed: fetchBooks, icon: const Icon(Icons.refresh))
-          ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const Text(
+          "DAFTAR BUKU",
+          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'think'),
         ),
-        body: buku.isEmpty ? const Center(child: CircularProgressIndicator()) :  ListView.builder(
-          itemCount: buku.length,
-          itemBuilder: (context, index){
-            final book = buku[index];
-            return ListTile(
-              title: Text(book['judul'] ?? 'No judul', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(book['penulis'] ?? 'No Penulis', style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),),
-                  Text(book['deskripsi'] ?? 'No deskripsi', style: const TextStyle(fontSize: 12),)
-                ],
+        actions: [
+          IconButton(
+            onPressed: fetchBooks,
+            icon: const Icon(Icons.refresh),
+            tooltip: "Refresh daftar",
+          ),
+        ],
+      ),
+      body: Container(
+        color: Colors.grey[200], // Warna latar belakang yang lembut
+        child: buku.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                padding: const EdgeInsets.all(10),
+                itemCount: buku.length,
+                itemBuilder: (context, index) {
+                  final book = buku[index];
+                  return Card(
+                    elevation: 3, // Menambahkan bayangan untuk kesan modern
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            book['judul'] ?? 'No Judul',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            book['penulis'] ?? 'No Penulis',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            book['deskripsi'] ?? 'No Deskripsi',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.edit),
+                                color: Colors.blue,
+                                tooltip: "Edit buku",
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.delete),
+                                color: Colors.red,
+                                tooltip: "Hapus buku",
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(onPressed: (){
-                    Navigator.pop(context);
-                  }, icon: const Icon(Icons.edit, color: Colors.blue,)),
-                  IconButton(onPressed: (){
-                    Navigator.pop(context);
-                  }, icon: const Icon(Icons.delete, color: Colors.red,)),
-                ],
-              ),
-            );
-          }
-        ),
-      );
-    }
+      ),
+    );
+  }
 }
