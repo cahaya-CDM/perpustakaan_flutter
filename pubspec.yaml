@@ -21,4 +21,7 @@ flutter:
   fonts:
     - family: think
       fonts:
-         - asset: asset/font/think Smart.ttf
+         - asset: asset/font/thinkSmart.ttf
+    - family: shine
+      fonts:
+         - asset: asset/font/Shine.ttf
